@@ -1,14 +1,36 @@
 #include "gauss.h"
+#include <math.h>
 #include <stdlib.h>
 
 void solve(ur_t ur, double *x) {
   double **a = ur->a;
   double *b = ur->b;
-  double buf, s;
+  double buf, s, emax, tmp;
   int n = ur->n;
-  int i, j, k;
+  int i, j, k, l;
+  int wmax;
+  double *atmp;
+  double btmp;
 
   for (i = 0; i < n - 1; i++) {
+    wmax = i;
+    emax = fabs(a[i][i]);
+    for (l = i + 1; l < n; l++)
+      tmp = fabs(a[l][i]);
+    if (tmp > emax) {
+      emax = tmp;
+      wmax = l - 1;
+    }
+
+    if (wmax != i) {
+      atmp = a[i];
+      a[i] = a[wmax];
+      a[wmax] = atmp;
+
+      btmp = b[i];
+      b[i] = b[wmax];
+      b[wmax] = btmp;
+    }
     for (j = i + 1; j < n; j++) {
       buf = a[j][i] / a[i][i];
       for (k = i; k < n; k++)
